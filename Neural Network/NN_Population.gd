@@ -30,6 +30,7 @@ func generate(size : int):
 		pop[i].brain.generate_network()
 		pop[i].brain.mutate(innovation_history)
 		add_child(pop[i])
+	return self
 
 # Creates a new agent
 func add_agent():
