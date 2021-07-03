@@ -168,6 +168,27 @@ func get_innovation_number(innovation_history : Array, from : NN_Node, to : NN_N
 	
 	return connection_innovation_number
 
+# Adds a deterministic connection to the network
+func add_connection(innovation_history : Array, node_01 : int, node_02 : int, weight : float) -> int:
+	if fully_connected():
+		return 1
+	
+	if random_connection_nodes_are_shit(node_01, node_02):
+		return 2
+	
+	if (nodes[node_01].layer > nodes[node_02].layer):
+		var temp = node_02
+		node_02 = node_01
+		node_01 = temp
+	
+	var connection_innovation_number = get_innovation_number(innovation_history, nodes[node_01], nodes[node_02])
+	
+	genes.append(NN_Connection.new(connection_innovation_number, self, nodes[node_01], nodes[node_02], weight, genes.size()))
+	self.add_child(genes.back())
+	connect_nodes()
+	
+	return 0
+
 # Adds a random connection to the network
 func add_random_connection(innovation_history : Array):
 	if (fully_connected()):
@@ -179,7 +200,7 @@ func add_random_connection(innovation_history : Array):
 		random_node_01 = agent_ref.pop_ref.rng.randi_range(0, nodes.size() - 1)
 		random_node_02 = agent_ref.pop_ref.rng.randi_range(0, nodes.size() - 1)
 	
-	if (nodes[random_node_01].layer > nodes[random_node_02]):
+	if (nodes[random_node_01].layer > nodes[random_node_02].layer):
 		var temp = random_node_02
 		random_node_02 = random_node_01
 		random_node_01 = temp
