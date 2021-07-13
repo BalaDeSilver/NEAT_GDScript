@@ -39,9 +39,9 @@ func add_agent():
 	pop.back().brain.generate_network()
 	pop.back().brain.mutate(innovation_history)
 	add_child(pop.back())
-
+# Virtual function that must be replaced by the user. Don't use generate_internal, however.
 func create_agent():
-	return NN_Agent.new().generate(4, 4, false, self)
+	return NN_Agent.new().generate_internal(4, 4, false, self)
 
 #Todo:Actually normalize update_alive() and feed_forward()
 func update_alive():

@@ -9,4 +9,6 @@ func _ready():
 
 # Don't forget to write this function, so the parent class can call your Agent class, instead of the base one.
 func create_agent():
-	return My_Agent.new().generate(4, 4, false, self)
+	return My_Agent.new().generate(4, 4, self)
+	# This function must have this format:
+	# return Agent_Name.new().generate(inputs, outputs, self)

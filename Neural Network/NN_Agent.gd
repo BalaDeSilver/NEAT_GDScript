@@ -29,8 +29,21 @@ var genome_outputs := 0
 # This references the location it should render in the canvas, relative to its parent.
 var relative_position := Vector2(0, 0)
 
-# A constructor would make this very hard to extend, so call it like My_Agent.new().generate(a, b, c, d)
-func generate(inputs : int, outputs : int, clone : bool, pop):
+# A constructor would make this very hard to extend, so call it like My_Agent.new().generate(inputs, outputs, self)
+func generate(inputs : int, outputs : int, pop):
+	genome_inputs = inputs
+	genome_outputs = outputs
+	pop_ref = pop
+	
+	brain = NN_Genome.new(genome_inputs, genome_outputs, false, self, pop_ref.innovation_history)
+	add_child(brain)
+	decision.resize(genome_outputs)
+	for i in decision:
+		i = 0.0
+	vision.resize(genome_inputs)
+	return self
+# A constructor to be used internally. Use this to clone an empty agent, if needed.
+func generate_internal(inputs : int, outputs : int, clone : bool, pop):
 	genome_inputs = inputs
 	genome_outputs = outputs
 	pop_ref = pop
@@ -46,7 +59,7 @@ func generate(inputs : int, outputs : int, clone : bool, pop):
 
 # As the duplicate() function sucks in Godot, this is really necessary.
 func clone():
-	var clone = get_script().new(genome_inputs, genome_outputs, true)
+	var clone = get_script().new().generate_internal(genome_inputs, genome_outputs, true, pop_ref)
 	clone.brain = brain.clone()
 	clone.add_child(clone.brain)
 	clone.fitness = fitness
@@ -65,7 +78,7 @@ func move():
 # If it's inactive, it's dead.
 func dead():
 	for i in decision:
-			i = 0.0
+		i = 0.0
 
 func finally():
 	pass
@@ -89,7 +102,7 @@ func calculate_fitness():
 
 # Sex 2: Electric Boogaloo
 func crossover(player2):
-	var child = get_script().new().generate(genome_inputs, genome_outputs, true, pop_ref)
+	var child = get_script().new().generate_internal(genome_inputs, genome_outputs, true, pop_ref)
 	child.brain = brain.crossover(player2.brain)
 	child.id = pop_ref.pop.size()
 	child.add_child(child.brain)
