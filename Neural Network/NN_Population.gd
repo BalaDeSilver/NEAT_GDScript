@@ -16,10 +16,14 @@ var innovation_history := []
 var gen_agents := []
 var species := []
 var kill_stale := false
+var all_inactive := false
+var checker := 1
 
 var next_connection_number := 0
 
 var MASS_EXTINCTION := false
+
+signal generation_changed(gen)
 
 # A constructor would make this very hard to extend, so call it like My_Population.new().generate(a, b, c, d)
 func generate(size : int):
@@ -43,11 +47,21 @@ func add_agent():
 func create_agent():
 	return NN_Agent.new().generate_internal(4, 4, false, self)
 
+func _physics_process(delta):
+	checker -= delta
+	if checker <= 0:
+		var alive = false
+		for i in pop:
+			if i.active:
+				alive = true
+				break
+		all_inactive = not alive
+		checker += 1
+
 #Todo:Actually normalize update_alive() and feed_forward()
 func update_alive():
 	for i in pop:
 		i.think()
-		i.update()
 
 # Sets the best agent on each species, based on score.
 func set_best_agent():
@@ -61,7 +75,7 @@ func set_best_agent():
 # Segregates all agents into species.
 func speciate():
 	for i in species:
-		i.actors.clear()
+		i.agents.clear()
 	
 	for i in pop:
 		var species_found = false
@@ -110,7 +124,7 @@ func kill_stale_species():
 func get_avg_fitness_sum():
 	var average_sum = 0
 	for i in species:
-		average_sum += i.average_sum
+		average_sum += i.average_fitness
 	return average_sum
 
 # Genocide all the species doing poorly, so we can Charles Darwin the population.
@@ -172,5 +186,7 @@ func natural_selection():
 	gen += 1
 	
 	for i in pop:
-		self.add_child(i)
+		add_child(i)
 		i.brain.generate_network()
+	
+	emit_signal("generation_changed", gen)

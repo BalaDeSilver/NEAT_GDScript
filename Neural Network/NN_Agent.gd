@@ -5,7 +5,7 @@ extends Node
 
 class_name NN_Agent
 
-const decision_threshold := 0.8 # If the output node value is bigger than this, return true, else, return false
+const decision_threshold := 0.5 # If the output node value is bigger than this, return true, else, return false
 
 var id := 0
 var agent_name := ""
@@ -14,7 +14,7 @@ var fitness := 0.0
 var brain # The reference downwards into the respective Neural Network
 var vision := [] # Another way to reference the first layer input
 var decision := [] # Another way to reference the last layer output
-var active := true
+var active := true # If agent is alive, set true
 
 # These values are used to sort the populations amongst each other. They go mostly unused in this project (for now, at least)
 var unadjusted_fitness := 0.0

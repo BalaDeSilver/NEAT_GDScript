@@ -94,9 +94,9 @@ func connect_nodes() -> void:
 
 # Processes the node output based on input
 func feed_forward(input_values : Array) -> Array:
-	for i in range(inputs):
+	for i in range(inputs): # Set the outputs of the input nodes
 		nodes[i].output_value = input_values[i]
-	nodes[bias_node].output_value = 1.0 #Bias output is always 1
+	nodes[bias_node].output_value = 1.0 # Bias output is always 1
 	
 	for i in network:
 		i.Engage()
@@ -106,8 +106,8 @@ func feed_forward(input_values : Array) -> Array:
 	
 	var outs = []
 	outs.resize(outputs)
-	for i in outs:
-		i = nodes[inputs + i].output_value
+	for i in range(outs.size()):
+		outs[i] = nodes[inputs + i].output_value
 	return outs
 
 # Sets up the NN as a list of nodes in the right order to be engaged
@@ -207,7 +207,7 @@ func add_random_connection(innovation_history : Array):
 	
 	var connection_innovation_number = get_innovation_number(innovation_history, nodes[random_node_01], nodes[random_node_02])
 	
-	genes.append(NN_Connection.new(connection_innovation_number, self, nodes[random_node_01], nodes[random_node_02], agent_ref.pop_ref.rng.randf(-1, 1), genes.size()))
+	genes.append(NN_Connection.new(connection_innovation_number, self, nodes[random_node_01], nodes[random_node_02], agent_ref.pop_ref.rng.randf_range(-1, 1), genes.size()))
 	self.add_child(genes.back())
 	connect_nodes()
 
@@ -280,14 +280,14 @@ func matching_gene(parent2, innovation_number : int):
 
 # As the duplicate() function sucks in Godot, this is really necessary.
 func clone():
-	var clone = get_script().new(inputs, outputs, true)
+	var clone = get_script().new(inputs, outputs, true, agent_ref, agent_ref.pop_ref.innovation_history)
 	
 	for i in nodes:
 		clone.nodes.append(i.clone())
 		clone.add_child(clone.nodes.back())
 	
 	for i in genes:
-		clone.genes.append(i.clone(clone.get_NN_node(i.from_node.number), clone.get_NN_node(i.to_node.number)))
+		clone.genes.append(i.clone(clone.get_NN_node(i.from_node.number), clone.get_NN_node(i.to_node.number), self))
 		clone.add_child(clone.genes.back())
 	
 	clone.layers = layers

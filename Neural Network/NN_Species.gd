@@ -28,10 +28,10 @@ func get_excess_disjoint(brain1, brain2):
 	var matching = 0.0
 	for i in brain1.genes:
 		for j in brain2.genes:
-			if (i.innovation_number == j.innovation_number):
+			if (i.innovation == j.innovation):
 				matching += 1
 				break
-	return (brain1.genes.size() + brain2.genes.size - 2 * matching)
+	return (brain1.genes.size() + brain2.genes.size() - 2 * matching)
 
 func average_weight_diff(brain1, brain2):
 	if (brain1.genes.size() == 0 or brain2.genes.size() == 0):
@@ -41,7 +41,7 @@ func average_weight_diff(brain1, brain2):
 	var total_diff = 0
 	for i in brain1.genes:
 		for j in brain2.genes:
-			if(i.innovation_number == j.innovation_number):
+			if(i.innovation == j.innovation):
 				matching += 1
 				total_diff += abs(i.weight - j.weight)
 				break
@@ -89,6 +89,13 @@ func sort_species():
 		rep = agents[0].brain
 	else:
 		staleness += 1
+
+func set_average():
+	var sum = 0
+	for x in agents:
+		sum += x.fitness
+	if(agents.size() != 0):
+		average_fitness = sum / agents.size()
 
 func select_random_agent():
 	var fitness_sum = 0

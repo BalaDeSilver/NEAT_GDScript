@@ -38,11 +38,12 @@ func Sigmoid(x : float) -> float:
 
 # The node sens its output to the inputs of the nodes it's connected to
 func Engage():
-	var output = 0
 	if(layer != 0):
+		var output = 0
 		output = Sigmoid(input_sum)
+		output_value = output
 	for x in range(output_connections.size()):
-		output_connections[x].to_node.input_sum += output_connections[x].weight * output
+		output_connections[x].to_node.input_sum += output_connections[x].weight * output_value
 
 func is_connected_to(node):
 	if (node.layer == layer):
